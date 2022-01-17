@@ -57,6 +57,8 @@ public class Conexion extends Thread {
                     DatagramPacket packet = new DatagramPacket(buf, buf.length);
                     socket.receive(packet);
                     String received = new String(packet.getData(), 0, packet.getLength());
+                    address = packet.getAddress();
+                    System.out.println("Client Address: " + address);
 
                     // Si el paquete dice listo
                     if (received.contains("listo")) {
@@ -163,7 +165,7 @@ public class Conexion extends Thread {
     public boolean initializeSockets() {
         try {
             // Creamos el servidor si no existe
-            address = InetAddress.getByName(ip);
+            address = InetAddress.getByName(EKIA.ip);
             System.out.println("Address: " + address.toString());
             socket = new DatagramSocket(myPort);
             socket.setSoTimeout(1000);
@@ -233,7 +235,16 @@ public class Conexion extends Thread {
                         break;
                     case "BalaSmart":
                         id = ID.BalaSmart;
-                        handler.addObject(new BalaSmart(posX, posY, id, handler, Color.cyan, 10, 10, ID.Jugador2));
+                        Color c = Color.cyan;
+                        if (!EKIA.host) {
+                            c = Color.orange;
+                        }
+                        handler.addObject(new BalaSmart(posX, posY, id, handler, c, 10, 10, ID.Jugador2));
+                        int n = jugador2.getSmart();
+                        if (n > 0) {
+                            n--;
+                        }
+                        jugador2.setBalasSmart(n);
                         break;
                     case "SpawnerBomba":
                         id = ID.SpawnerBomba;
@@ -248,11 +259,11 @@ public class Conexion extends Thread {
                         float dirX = Float.parseFloat(result[5]);
                         float dirY = Float.parseFloat(result[6]);
                         jugador2.defensaBalaPropia.reiniciar();
-                        Color color = Color.cyan;
+                        c = Color.cyan;
                         if (!EKIA.host) {
-                            color = Color.orange;
+                            c = Color.orange;
                         }
-                        handler.addObject(new Bala(posX, posY, ID.Bala, handler, color, 5, 5, dirX, dirY, ID.Jugador2));
+                        handler.addObject(new Bala(posX, posY, ID.Bala, handler, c, 5, 5, dirX, dirY, ID.Jugador2));
                         break;
                     default:
                         break;

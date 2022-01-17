@@ -56,30 +56,43 @@ public class HUD {
         g.drawString("Jugador 1", 20, 70);
         g.drawString("Jugador 2", EKIA.ANCHO - 75, 70);
 
-        Color c = P1.getColor();
+        Color c;
 
-        for (int i = 0; i < Matchmaking.vidasP1; i++) {
-            g.setColor(c);
-            g.fillRect(185 + i * 20, 35, 16, 16);
+        // Si somos el cliente o el host se dibuja de manera diferente la vida
+        // SI ESTAMOS ONLINE Y SOMOS EL CLIENTE
+        if (EKIA.conectadoOnline && !EKIA.host) {
+
+            c = P1.getColor();
+            for (int i = 0; i < Matchmaking.vidasP2; i++) {
+                g.setColor(c);
+                g.fillRect(185 + i * 20, 35, 16, 16);
+            }
+
+            c = P2.getColor();
+            for (int i = 0; i < Matchmaking.vidasP1; i++) {
+                g.setColor(c);
+                g.fillRect(EKIA.ANCHO - 195 - i * 20, 35, 16, 16);
+            }
+
+        } else {
+
+            // SI ESTAMOS OFFLINE O SOMOS EL HOST
+            c = P1.getColor();
+            for (int i = 0; i < Matchmaking.vidasP1; i++) {
+                g.setColor(c);
+                g.fillRect(185 + i * 20, 35, 16, 16);
+            }
+
+            c = P2.getColor();
+            for (int i = 0; i < Matchmaking.vidasP2; i++) {
+
+                g.setColor(c);
+                g.fillRect(EKIA.ANCHO - 195 - i * 20, 35, 16, 16);
+            }
+
         }
 
         g.setColor(Color.gray);
-        g.drawString("Vidas:", 185, 30);
-        g.drawString("Vidas:", EKIA.ANCHO - 235, 30);
-
-        c = P2.getColor();
-
-        for (int i = 0; i < Matchmaking.vidasP2; i++) {
-            g.setColor(c);
-            g.fillRect(EKIA.ANCHO - 195 - i * 20, 35, 16, 16);
-        }
-
-        g.setColor(Color.gray);
-
-        for (int i = 0; i < 3; i++) {
-            g.drawRect(185 + i * 20, 35, 16, 16);
-            g.drawRect(EKIA.ANCHO - 195 - i * 20, 35, 16, 16);
-        }
 
         if (((Jugador) P1).getSmart() > 0) { // Si si tiene balas smart, dibuja las balas smart del jugador 1, un contador
             g.drawString("Smart Bullet: ", 20, 80);
@@ -115,6 +128,15 @@ public class HUD {
             g.fillRect(EKIA.ANCHO - 30, 80, 10, 10);
             g.setColor(Color.gray);
             g.drawRect(EKIA.ANCHO - 30, 80, 10, 10);
+        }
+
+        g.setColor(Color.gray);
+        g.drawString("Vidas:", 185, 30);
+        g.drawString("Vidas:", EKIA.ANCHO - 235, 30);
+
+        for (int i = 0; i < 3; i++) {
+            g.drawRect(185 + i * 20, 35, 16, 16);
+            g.drawRect(EKIA.ANCHO - 195 - i * 20, 35, 16, 16);
         }
 
         Font fnt = new Font("arial", 1, 30);

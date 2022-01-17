@@ -43,8 +43,28 @@ public class KeyInput extends KeyAdapter {
                 }
             }
 
+            // PARA INGRESAR LA DIRECCION IP
+            if (EKIA.estadoActual == EstadoJuego.Client) {
+
+                String ip = EKIA.ip;
+
+                if (key == KeyEvent.VK_BACK_SPACE) {
+                    if (ip.length() > 0) {
+                        ip = ip.substring(0, ip.length() - 1);
+                    }
+                } else {
+                    if (Character.isDigit(e.getKeyChar()) || e.getKeyChar() == '.') {
+                        ip += e.getKeyChar();
+                    }
+                }
+
+                EKIA.ip = ip;
+            }
+
+            // CONTROLES DEL JUGADOR 1 Y 2
             for (int i = 0; i < handler.object.size(); i++) {
 
+                // JUGADOR 1
                 GameObject tempObject = handler.object.get(i);
 
                 if (tempObject.getId() == ID.Jugador1) {
@@ -108,6 +128,8 @@ public class KeyInput extends KeyAdapter {
                     }
 
                 } else if (tempObject.getId() == ID.Jugador2 && EKIA.estadoActual == EstadoJuego.Juego && !EKIA.conectadoOnline) {
+
+                    // JUGADOR 2
                     if (key == KeyEvent.VK_NUMPAD8) {
                         tempObject.setVelY(-5);
                         keyDown2[0] = true;

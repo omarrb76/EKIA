@@ -21,7 +21,7 @@ public class EKIA extends Canvas implements Runnable {
 
     // CONEXION, LAS VOY A BORRAR
     public static String ip = "localhost";
-    public static int myPort = 4444, opponentPort = 5555;
+    public static int myPort = 4545, opponentPort = 4545;
 
     public static EstadoJuego estadoActual = EstadoJuego.Portada; // Es estatica para que sea global y empezamos en el menu
 
@@ -35,7 +35,7 @@ public class EKIA extends Canvas implements Runnable {
     public static boolean host = false; // Para saber si somos el host o no
 
     public EKIA() {
-        
+
         Scanner scanner = new Scanner(System.in);
         /*System.out.println("Por favor introduzca la dirección ip de la máquina a la que se desea unir: ");
         ip = scanner.nextLine();*/

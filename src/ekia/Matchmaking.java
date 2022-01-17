@@ -7,12 +7,12 @@ import java.util.Random;
 // Balas, etc... Asimismo puede llamar a un string de cronometro o que tenga uno interno
 public class Matchmaking {
 
-    public Conexion [] conexion = null; // Para dar muerte a la conexion cuando se acaba el juego
+    public Conexion[] conexion = null; // Para dar muerte a la conexion cuando se acaba el juego
 
     private Handler handler;
     private Random r = new Random(System.currentTimeMillis());
     public static int vidasP1 = 3, vidasP2 = 3;
-    public Cronometro partida = new Cronometro(5);
+    public Cronometro partida = new Cronometro(180);
 
     public static enum SPAWN {
         botiquin, escudo, balaSmart, bomba
@@ -63,11 +63,11 @@ public class Matchmaking {
         }
     }
 
-    public Conexion [] getConexion() {
+    public Conexion[] getConexion() {
         return conexion;
     }
 
-    public void setConexion(Conexion [] conexion) {
+    public void setConexion(Conexion[] conexion) {
         this.conexion = conexion;
     }
 

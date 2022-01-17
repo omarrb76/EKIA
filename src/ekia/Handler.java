@@ -39,17 +39,4 @@ public class Handler {
         }
         return null;
     }
-
-    public void clearEnemies() {
-
-        /*for (int i = 0; i<object.size(); i++){
-
-            GameObject tempObject = object.get(i);
-            if (tempObject.getId() == ID.Player){
-                object.clear();
-                addObject(tempObject);
-                break;
-            }
-        }*/
-    }
 }

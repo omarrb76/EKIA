@@ -10,6 +10,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.lang.Thread.State;
 import java.util.Random;
 import javax.imageio.ImageIO;
 
@@ -20,7 +21,7 @@ public class Menu extends MouseAdapter {
     private Handler handler;
 
     // CONEXION PARA EL ONLINE
-    Conexion conexion;
+    Conexion conexion = null;
 
     // DISEÑO DEL NIVEL
     public static DISEÑO diseño = DISEÑO.libre;
@@ -76,7 +77,7 @@ public class Menu extends MouseAdapter {
     public void nuevaConexion() {
         if (conexion == null) {
             conexion = new Conexion(handler, EKIA.ip, EKIA.myPort, EKIA.opponentPort, this);
-            Conexion [] nuevaConexion = {conexion};
+            Conexion[] nuevaConexion = {conexion};
             m.setConexion(nuevaConexion);
         }
     }
@@ -117,7 +118,7 @@ public class Menu extends MouseAdapter {
         if (null != EKIA.estadoActual) {
             switch (EKIA.estadoActual) {
                 case Fin:
-                    
+
                     if (primeraVezMenu) {
                         handler.object.clear();
                         generarParticulas();
@@ -368,24 +369,55 @@ public class Menu extends MouseAdapter {
                     // TITULO SELECCIONE DESPLIEGUE
                     g.setColor(Color.white);
                     g.setFont(fnt);
-                    x = g.getFontMetrics(fnt).stringWidth("Uniendose a Oponente") / 2;
-                    g.drawString("Uniendose a Oponente", EKIA.ANCHO / 2 - x, 50);
+                    x = g.getFontMetrics(fnt).stringWidth("Unirse a Oponente") / 2;
+                    g.drawString("Unirse a Oponente", EKIA.ANCHO / 2 - x, 50);
+
+                    // INGRESAR DIRECCIÓN IP
+                    g.setFont(fnt2);
+                    rectangle = g.getFontMetrics(fnt2).getStringBounds("Direccion IP:", g);
+                    x = (int) rectangle.getWidth() / 2;
+                    y = (64 - (int) rectangle.getHeight()) / 2 + g.getFontMetrics(fnt2).getAscent();
+                    g.drawString("Direccion IP:", EKIA.ANCHO / 4 - x, 75 + y);
+
+                    // DIRECCION IP
+                    g.drawRect(EKIA.ANCHO / 2 - 50, 72, 300, 64);
+                    rectangle = g.getFontMetrics(fnt2).getStringBounds(EKIA.ip, g);
+                    y = (64 - (int) rectangle.getHeight()) / 2 + g.getFontMetrics(fnt2).getAscent();
+                    g.drawString(EKIA.ip, EKIA.ANCHO / 2 - 40, 75 + y);
 
                     // ERROR ONLINE
-                    g.setFont(fnt2);
                     if (EKIA.errorOnline) {
+                        g.setColor(Color.red);
                         rectangle = g.getFontMetrics(fnt2).getStringBounds("no se pudo conectar con oponente", g);
                         x = (int) rectangle.getWidth() / 2;
                         y = (64 - (int) rectangle.getHeight()) / 2 + g.getFontMetrics(fnt2).getAscent();
                         g.drawString("no se pudo conectar con oponente", EKIA.ANCHO / 2 - x, 150 + y);
                     }
 
-                    // CANCELAR
+                    // CONECTAR
+                    // BOTON DE CONECTAR CON OPONENTE
+                    if (conexion == null || conexion.getState() == State.TERMINATED) {
+                        g.setColor(Color.white);
+                        g.drawRect(EKIA.ANCHO / 2 - 100, 250, 200, 64);
+                        rectangle = g.getFontMetrics(fnt2).getStringBounds("conectar", g);
+                        x = (int) rectangle.getWidth() / 2;
+                        y = (64 - (int) rectangle.getHeight()) / 2 + g.getFontMetrics(fnt2).getAscent();
+                        g.drawString("conectar", EKIA.ANCHO / 2 - x, 250 + y);
+                    } else { // INFORMAMOS QUE SE ESTA CONECTANDO CON EL OPONENTE
+                        g.setColor(Color.green);
+                        rectangle = g.getFontMetrics(fnt2).getStringBounds("intentando conexion", g);
+                        x = (int) rectangle.getWidth() / 2;
+                        y = (64 - (int) rectangle.getHeight()) / 2 + g.getFontMetrics(fnt2).getAscent();
+                        g.drawString("intentando conexion", EKIA.ANCHO / 2 - x, 150 + y);
+                    }
+
+                    // ATRAS
+                    g.setColor(Color.white);
                     g.drawRect(EKIA.ANCHO / 2 - 100, 350, 200, 64);
-                    rectangle = g.getFontMetrics(fnt2).getStringBounds("cancelar", g);
+                    rectangle = g.getFontMetrics(fnt2).getStringBounds("atras", g);
                     x = (int) rectangle.getWidth() / 2;
                     y = (64 - (int) rectangle.getHeight()) / 2 + g.getFontMetrics(fnt2).getAscent();
-                    g.drawString("cancelar", EKIA.ANCHO / 2 - x, 350 + y);
+                    g.drawString("atras", EKIA.ANCHO / 2 - x, 350 + y);
                     break;
 
                 case Ayuda:
@@ -480,7 +512,7 @@ public class Menu extends MouseAdapter {
                         playlistMenu.reproducirCancion();
                         EKIA.errorOnline = false;
                         EKIA.host = false;
-                        
+
                     }
                     break;
 
@@ -597,9 +629,7 @@ public class Menu extends MouseAdapter {
                     if (mouseOver(mx, my, EKIA.ANCHO / 4 * 3 - 100, 150, 200, 64)) { // CLIENT
                         Sound clip = new Sound("res/Sonidos/menuShot.mp3");
                         clip.play();
-                        nuevaConexion();
                         EKIA.host = false;
-                        conexion.start();
                         EKIA.estadoActual = EstadoJuego.Client;
                     }
 
@@ -612,7 +642,26 @@ public class Menu extends MouseAdapter {
                     break;
 
                 case Host:
+                    if (mouseOver(mx, my, EKIA.ANCHO / 2 - 100, 350, 200, 64)) { // REGRESAR
+                        Sound clip = new Sound("res/Sonidos/menuShot.mp3");
+                        clip.play();
+                        EKIA.estadoActual = EstadoJuego.Online;
+                        terminaConexion();
+                        EKIA.errorOnline = false;
+                        EKIA.host = false;
+                    }
+                    break;
                 case Client:
+
+                    if (mouseOver(mx, my, EKIA.ANCHO / 2 - 100, 250, 200, 64) && (conexion == null || conexion.getState() == State.TERMINATED)) { // CONECTAR
+                        terminaConexion();
+                        Sound clip = new Sound("res/Sonidos/menuShot.mp3");
+                        clip.play();
+                        nuevaConexion();
+                        conexion.start();
+                        EKIA.errorOnline = false;
+                    }
+
                     if (mouseOver(mx, my, EKIA.ANCHO / 2 - 100, 350, 200, 64)) { // REGRESAR
                         Sound clip = new Sound("res/Sonidos/menuShot.mp3");
                         clip.play();
