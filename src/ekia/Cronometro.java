@@ -32,8 +32,9 @@ public class Cronometro {
 
     @Override
     public String toString() {
-        DecimalFormat formato1 = new DecimalFormat("#.0");
-        String res = (int) getMinutos() + " : " + formato1.format(getSegundos());
+        DecimalFormat formato1 = new DecimalFormat("##.00");
+        String minutes = String.format("%02d", (int) getMinutos());
+        String res = minutes + " : " + formato1.format(getSegundos());
         return res;
     }
 

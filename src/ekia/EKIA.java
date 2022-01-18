@@ -38,11 +38,11 @@ public class EKIA extends Canvas implements Runnable {
 
         Scanner scanner = new Scanner(System.in);
         /*System.out.println("Por favor introduzca la dirección ip de la máquina a la que se desea unir: ");
-        ip = scanner.nextLine();*/
+        ip = scanner.nextLine();
         System.out.println("Introduzca el puerto de la máquina a la que se desea unir: ");
         opponentPort = scanner.nextInt();
         System.out.println("Introduzca el puerto de su máquina: ");
-        myPort = scanner.nextInt();
+        myPort = scanner.nextInt();*/
 
         handler = new Handler();
 

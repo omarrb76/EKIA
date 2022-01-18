@@ -183,12 +183,32 @@ public class Conexion extends Thread {
     public boolean communication() {
 
         // MANDAMOS EL PAQUETE
+        // LA ESTRUCTURA ES LA SIGUIENTE
+        // POSICION DEL JUGADOR: JugadorPosX, JugadorPosY
+        // NUEVOS POWERUPS: JugadorPosX, JugadorPosY, ID, posX, posY
+        // UNA BALA: JugadorPosX, JugadorPosY, ID, posX, posY, velX, velY
+        // UNA BOMBA: JugadorPosX, JugadorPosY, ID, posX, posY, puntosX[8], puntosY[8] // con un total de 21 argumentos
+        // del [5] al [12] son dirsX ... del [13] al [21] son dirsY
         String temp = Math.round(jugador1.getX()) + "?" + Math.round(jugador1.getY());
         // Si metemos una bala nueva, tenemos que notificar al otro
         if (objeto != null) {
             temp = temp + "?" + objeto.getId() + "?" + objeto.getX() + "?" + objeto.getY();
             if (objeto instanceof Bala) {
                 temp = temp + "?" + ((Bala) objeto).getVelX() + "?" + ((Bala) objeto).getVelY();
+            } else if (objeto instanceof Bomba) {
+                Bomba bomba = (Bomba) objeto;
+                float[] dirsX = bomba.getDirsX();
+                float[] dirsY = bomba.getDirsY();
+                // Lo hice en dos fors para que el paquete este mejor ordenado
+                // Agregamos las direcciones en X
+                for (int i = 0; i < 8; i++) {
+                    temp = temp + "?" + dirsX[i];
+                }
+                // Agregamos las direcciones en Y
+                for (int i = 0; i < 8; i++) {
+                    temp = temp + "?" + dirsY[i];
+                }
+                System.out.println("Tamaño del paquete: " + temp.getBytes().length);
             }
             objeto = null;
         }
@@ -201,7 +221,7 @@ public class Conexion extends Thread {
         }
 
         // RECIBIMOS EL PAQUETE
-        buf = new byte[64];
+        buf = new byte[100];
         packet = new DatagramPacket(buf, buf.length);
         try {
 
@@ -252,7 +272,20 @@ public class Conexion extends Thread {
                         break;
                     case "Bomba":
                         id = ID.Bomba;
-                        handler.addObject(new Bomba(posX, posY, id, handler, Color.white, 32, 32));
+                        Bomba bomba = new Bomba(posX, posY, id, handler, Color.white, 32, 32);
+                        // Direcciones de los perdigones de la bomba
+                        float[] dirsX = new float[8];
+                        float[] dirsY = new float[8];
+                        // Conseguimos las direcciones de los perdigones
+                        for (int i = 5, j = 0, x = 13; i < 13; i++, j++, x++) {
+                            dirsX[j] = Float.parseFloat(result[i]);
+                            dirsY[j] = Float.parseFloat(result[x]);
+                        }
+                        // Los agregamos a la bomba
+                        bomba.setDirsX(dirsX);
+                        bomba.setDirsY(dirsY);
+                        // Agregamos el objeto e informamos que se lo gasto
+                        handler.addObject(bomba);
                         jugador2.setBomba(false); // Ya se la gasto
                         break;
                     case "Bala":

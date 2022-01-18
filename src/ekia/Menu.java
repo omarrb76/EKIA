@@ -488,14 +488,9 @@ public class Menu extends MouseAdapter {
                     if (!EKIA.conectadoOnline) {
 
                         if (mouseOver(mx, my, EKIA.ANCHO / 2 - 100, 250, 200, 64)) { // Revancha Button
-                            handler.object.clear();
-                            handler.addObject(new Jugador(50, 200, ID.Jugador1, handler, Color.red, 32, 32));
-                            handler.addObject(new Jugador(EKIA.ANCHO - 82, 200, ID.Jugador2, handler, Color.red, 32, 32));
-                            EKIA.estadoActual = EstadoJuego.Juego;
                             Sound clip = new Sound("res/Sonidos/menuShot.mp3");
                             clip.play();
-                            diseñoMap.diseñar();
-                            handler = diseñoMap.getDiseño();
+                            iniciarPartida();
                             return;
                         }
 
@@ -702,10 +697,10 @@ public class Menu extends MouseAdapter {
             handler.addObject(new Jugador(EKIA.ANCHO - 90, 208, ID.Jugador1, handler, Color.blue, 32, 32));
         }
 
-        playlistGame.elegirCancionAzar();
-
         // PONEMOS LA CANCION
+        playlistGame.elegirCancionAzar();
         playlistGame.reproducirCancion();
+
     }
 
     private void definirDiseño() { // Esta clase se manda a llamar para cambiar el valor de diseño
