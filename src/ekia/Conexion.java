@@ -23,8 +23,13 @@ public class Conexion extends Thread {
     private String ip;
     private int myPort, opponentPort, errores = 0;
     private boolean error = false;
+    private boolean listo = false;
 
     // Objetos que se añaden dinámicamente sobre la red
+    // Para seleccion de mapa
+    private int diseñoInt = 0; // Diseño del mapa
+    private int diseñoIntAnt = 0; // Para detectar si hubo algun cambio en el diseño y mandar el nuevo paquete
+    // Para la partida
     private int x = 0, y = 0;
     private Jugador jugador1, jugador2;
     private GameObject objeto = null;
@@ -46,6 +51,7 @@ public class Conexion extends Thread {
             return;
         }
 
+        // COMUNICACION INICIAL
         while (running) {
             try {
 
@@ -68,8 +74,9 @@ public class Conexion extends Thread {
                         buf = temp.getBytes();
                         packet = new DatagramPacket(buf, buf.length, address, opponentPort);
                         socket.send(packet);
-                        // Empezamos el juego
+                        // Mandamos a elegir el mapa
                         EKIA.conectadoOnline = true;
+                        EKIA.estadoActual = EstadoJuego.SeleccionPersonajeOnline;
                         break;
                     }
 
@@ -89,8 +96,9 @@ public class Conexion extends Thread {
 
                     // Si el paquete dice listo
                     if (received.contains("listo")) {
-                        // Ya estan conectados, vamos a ejecutar el juego
+                        // Ya estan conectados, mandamos a elegir el mapa
                         EKIA.conectadoOnline = true;
+                        EKIA.estadoActual = EstadoJuego.SeleccionPersonajeOnline;
                         break;
                     }
                 }
@@ -109,15 +117,22 @@ public class Conexion extends Thread {
             }
         }
 
+        // COMUNICACION DEL MENU, ELEGIR MAPA
+        while (EKIA.estadoActual == EstadoJuego.SeleccionPersonajeOnline) {
+            if (!communicationMenu()) {
+                break;
+            }
+            // SI AMBOS JUGADORES ESTAN LISTOS
+            if (listo && menu.isListo()) {
+                System.out.println("iniciamos la partida");
+                break;
+            }
+        }
+
+        // PARTIDA ONLINE
         if (EKIA.conectadoOnline) {
 
             menu.iniciarPartida();
-
-            try {
-                Conexion.sleep(500);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(Conexion.class.getName()).log(Level.SEVERE, null, ex);
-            }
 
             jugador1 = (Jugador) handler.getObject(ID.Jugador1);
             jugador2 = (Jugador) handler.getObject(ID.Jugador2);
@@ -177,6 +192,87 @@ public class Conexion extends Thread {
             Logger.getLogger(EKIA.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
+    }
+
+    public boolean communicationMenu() {
+        // Detectamos si hubo algun cambio en el diseño
+        // MANDAMOS EL PAQUETE
+        // Inicialmente el paquete contiene si el jugador esta listo o no
+        String temp = "F";
+        if (menu.isListo()) {
+            temp = "T";
+        }
+
+        // SI se cambio le diseño se reemplaza el contenido del paquete
+        if (diseñoInt != diseñoIntAnt) {
+            temp = "DISENO?" + diseñoInt;
+            diseñoIntAnt = diseñoInt;
+        }
+
+        buf = temp.getBytes();
+        DatagramPacket packet = new DatagramPacket(buf, buf.length, address, opponentPort);
+        try {
+            socket.send(packet);
+        } catch (IOException ex) {
+            Logger.getLogger(EKIA.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        // RECIBIMOS EL PAQUETE
+        buf = new byte[16];
+        packet = new DatagramPacket(buf, buf.length);
+        try {
+
+            socket.receive(packet);
+            String received = new String(packet.getData(), 0, packet.getLength());
+
+            // Separamos la informacion del archivo
+            String[] result = received.split("\\?");
+
+            switch (result[0]) {
+                case "DISENO":
+                    setDiseñoInt(Integer.parseInt(result[1]));
+                    menu.setDiseñoInt(diseñoInt);
+                    break;
+                case "T":
+                    if (!listo) {
+                        listo = true;
+                        Sound clip = new Sound("res/Sonidos/menuShot.mp3");
+                        clip.play();
+                    }
+                    break;
+                case "F":
+                    if (listo) {
+                        listo = false;
+                        Sound clip = new Sound("res/Sonidos/menuShot.mp3");
+                        clip.play();
+                    }
+                    break;
+                default:
+                    listo = true;
+                    break;
+            }
+
+            // Reiniciamos los errores
+            errores = 0;
+
+        } catch (IOException | NumberFormatException ex) {
+            System.out.println("No he recibido paquete");
+            errores++;
+            // Lo desconectamos sin serror, porque el es el que se salio
+            if (!EKIA.conectadoOnline) {
+                return false;
+            }
+            if (errores >= 5 && !EKIA.errorOnline) {
+                EKIA.errorOnline = true;
+                EKIA.estadoActual = EstadoJuego.ErrorOnline;
+                EKIA.estadoAnterior = EstadoJuego.Online;
+                EKIA.conectadoOnline = false;
+                running = false;
+                // Fracaso
+                return false;
+            }
+        }
+        return true;
     }
 
     // Este método se encarga de mandar y recibir los paquetes
@@ -338,6 +434,23 @@ public class Conexion extends Thread {
     // Indica al juego que tenemos un nuevo objeto, para que se mande en el proximo paquete
     public void addObject(GameObject objeto) {
         this.objeto = objeto;
+    }
+
+    public int getDiseñoInt() {
+        return diseñoInt;
+    }
+
+    public void setDiseñoInt(int diseñoInt) {
+        this.diseñoIntAnt = this.diseñoInt;
+        this.diseñoInt = diseñoInt;
+    }
+
+    public boolean isListo() {
+        return listo;
+    }
+
+    public void setListo(boolean listo) {
+        this.listo = listo;
     }
 
 }

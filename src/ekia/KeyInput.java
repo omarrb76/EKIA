@@ -114,17 +114,17 @@ public class KeyInput extends KeyAdapter {
                         }
                     }
 
-                    if (key == KeyEvent.VK_R && EKIA.estadoActual == EstadoJuego.Juego && !EKIA.conectadoOnline) { // Lo mandamos al menu, solo si estamos en el juego y no esta en línea
-                        EKIA.pausado = false;
-                        handler.object.clear();
-                        EKIA.ganador = 0;
-                        for (int j = 0; j < 10; j++) {
-                            float bx = (float) (r.nextInt(EKIA.ANCHO - 40));
-                            float by = (float) (r.nextInt(EKIA.ALTO - 60));
-                            Color nuevo = new Color(r.nextInt(255), r.nextInt(255), r.nextInt(255));
-                            handler.addObject(new Bala(bx, by, ID.BalaMenu, handler, nuevo, 16, 16, r.nextInt(5) - 5, r.nextInt(5) - 5, ID.Jugador1));
+                    if (key == KeyEvent.VK_R && EKIA.estadoActual == EstadoJuego.Juego) { // Lo mandamos al menu, solo si estamos en el juego y no esta en línea
+                        if (!EKIA.conectadoOnline) {
+                            EKIA.pausado = false;
+                            EKIA.ganador = 0;
+                            menu.setPrimeraVezMenu(true);
+                            EKIA.estadoActual = EstadoJuego.Fin;
+                        } else {
+                            menu.terminaConexion();
+                            menu.setPrimeraVezMenu(true);
+                            EKIA.estadoActual = EstadoJuego.EresUnCobarde;
                         }
-                        EKIA.estadoActual = EstadoJuego.Fin;
                     }
 
                 } else if (tempObject.getId() == ID.Jugador2 && EKIA.estadoActual == EstadoJuego.Juego && !EKIA.conectadoOnline) {

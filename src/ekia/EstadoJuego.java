@@ -11,6 +11,8 @@ public enum EstadoJuego {
     Online,
     Host,
     Client,
+    SeleccionPersonajeOnline, // Es lo mismo que el seleccion personaje, pero para cuando estamos en linea
+    EresUnCobarde,
     Ayuda,
     Pausa,
     ErrorOnline

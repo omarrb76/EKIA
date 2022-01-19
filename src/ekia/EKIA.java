@@ -24,6 +24,7 @@ public class EKIA extends Canvas implements Runnable {
     public static int myPort = 4545, opponentPort = 4545;
 
     public static EstadoJuego estadoActual = EstadoJuego.Portada; // Es estatica para que sea global y empezamos en el menu
+    public static EstadoJuego estadoAnterior = EstadoJuego.Portada; // Esta es una variable de control para el errorOnline que nos puede aventar, saber cuando detener la musica del juego o del menu
 
     public static boolean pausado; // me indica si el juego esta en pausa o no
 
@@ -38,11 +39,11 @@ public class EKIA extends Canvas implements Runnable {
 
         Scanner scanner = new Scanner(System.in);
         /*System.out.println("Por favor introduzca la dirección ip de la máquina a la que se desea unir: ");
-        ip = scanner.nextLine();
+        ip = scanner.nextLine();*/
         System.out.println("Introduzca el puerto de la máquina a la que se desea unir: ");
         opponentPort = scanner.nextInt();
         System.out.println("Introduzca el puerto de su máquina: ");
-        myPort = scanner.nextInt();*/
+        myPort = scanner.nextInt();
 
         handler = new Handler();
 

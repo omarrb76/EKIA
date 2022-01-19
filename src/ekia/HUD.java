@@ -68,13 +68,13 @@ public class HUD {
             c = P1.getColor();
             for (int i = 0; i < Matchmaking.vidasP2; i++) {
                 g.setColor(c);
-                g.fillRect(185 + i * 20, 35, 16, 16);
+                g.fillRect(175 + i * 20, 35, 16, 16);
             }
 
             c = P2.getColor();
             for (int i = 0; i < Matchmaking.vidasP1; i++) {
                 g.setColor(c);
-                g.fillRect(EKIA.ANCHO - 195 - i * 20, 35, 16, 16);
+                g.fillRect(EKIA.ANCHO - 205 - i * 20, 35, 16, 16);
             }
 
         } else {

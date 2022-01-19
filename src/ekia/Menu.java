@@ -22,6 +22,7 @@ public class Menu extends MouseAdapter {
 
     // CONEXION PARA EL ONLINE
     Conexion conexion = null;
+    private boolean listo = false; // Cuando sea verdadero significa que esta listo para darle al multi
 
     // DISEÑO DEL NIVEL
     public static DISEÑO diseño = DISEÑO.libre;
@@ -75,6 +76,7 @@ public class Menu extends MouseAdapter {
     }
 
     public void nuevaConexion() {
+        diseñoInt = 0;
         if (conexion == null) {
             conexion = new Conexion(handler, EKIA.ip, EKIA.myPort, EKIA.opponentPort, this);
             Conexion[] nuevaConexion = {conexion};
@@ -83,6 +85,8 @@ public class Menu extends MouseAdapter {
     }
 
     public void terminaConexion() {
+        listo = false;
+        diseñoInt = 0;
         if (conexion != null) {
             System.out.println("Mande a cerrar los sockets");
             EKIA.conectadoOnline = false;
@@ -181,6 +185,31 @@ public class Menu extends MouseAdapter {
 
                     break;
 
+                case EresUnCobarde:
+
+                    if (primeraVezMenu) {
+                        handler.object.clear();
+                        generarParticulas();
+                        primeraVezMenu = false;
+                    }
+
+                    // Mensaje deshonroso
+                    g.setFont(fnt);
+                    g.setColor(Color.white);
+                    x = g.getFontMetrics(fnt).stringWidth("que gay") / 2;
+                    g.drawString("que gay", EKIA.ANCHO / 2 - x, 100);
+
+                    g.setFont(fnt2);
+
+                    // MENU
+                    g.drawRect(EKIA.ANCHO / 2 - 100, 350, 200, 64);
+                    rectangle = g.getFontMetrics(fnt2).getStringBounds("menu", g);
+                    x = (int) rectangle.getWidth() / 2;
+                    y = (64 - (int) rectangle.getHeight()) / 2 + g.getFontMetrics(fnt2).getAscent();
+                    g.drawString("menu", EKIA.ANCHO / 2 - x, 350 + y);
+
+                    break;
+
                 case ErrorOnline:
 
                     // Si se perdio la conexion con el oponente
@@ -253,6 +282,7 @@ public class Menu extends MouseAdapter {
                     break;
 
                 case SeleccionPersonaje:
+                case SeleccionPersonajeOnline:
 
                     // TITULO SELECCIONE DESPLIEGUE
                     g.setColor(Color.white);
@@ -261,12 +291,12 @@ public class Menu extends MouseAdapter {
                     g.drawString("seleccione despliegue", EKIA.ANCHO / 2 - x, 50);
 
                     // BOTONES DERECHA E IZQUIERDA
-                    g.drawRect(15, 170, 50, 150); // IZQUIERDA
-                    g.drawLine(45, 207, 25, 245);
-                    g.drawLine(25, 245, 45, 282);
-                    g.drawRect(EKIA.ANCHO - 70, 170, 50, 150); // DERECHA
-                    g.drawLine(EKIA.ANCHO - 50, 207, EKIA.ANCHO - 30, 245);
-                    g.drawLine(EKIA.ANCHO - 30, 245, EKIA.ANCHO - 50, 282);
+                    g.drawRect(15, 150, 50, 150); // IZQUIERDA
+                    g.drawLine(45, 187, 25, 225);
+                    g.drawLine(25, 225, 45, 262);
+                    g.drawRect(EKIA.ANCHO - 90, 150, 50, 150); // DERECHA
+                    g.drawLine(EKIA.ANCHO - 70, 187, EKIA.ANCHO - 50, 225);
+                    g.drawLine(EKIA.ANCHO - 50, 225, EKIA.ANCHO - 70, 262);
 
                     // ATRAS
                     g.setFont(fnt2);
@@ -278,10 +308,14 @@ public class Menu extends MouseAdapter {
 
                     // ACEPTAR
                     g.drawRect(EKIA.ANCHO / 4 * 3 - 100, EKIA.ALTO - 120, 200, 64);
-                    rectangle = g.getFontMetrics(fnt2).getStringBounds("aceptar", g);
+                    String aceptar = "aceptar";
+                    if (EKIA.conectadoOnline) {
+                        aceptar = "listo";
+                    }
+                    rectangle = g.getFontMetrics(fnt2).getStringBounds(aceptar, g);
                     x = (int) rectangle.getWidth() / 2;
                     y = (64 - (int) rectangle.getHeight()) / 2 + g.getFontMetrics(fnt2).getAscent();
-                    g.drawString("aceptar", EKIA.ANCHO / 4 * 3 - x, EKIA.ALTO - 120 + y);
+                    g.drawString(aceptar, EKIA.ANCHO / 4 * 3 - x, EKIA.ALTO - 120 + y);
 
                     // TITULOS DE NIVELES
                     if (diseñoInt == DISEÑO.libre.ordinal()) {
@@ -289,24 +323,64 @@ public class Menu extends MouseAdapter {
                         rectangle = g.getFontMetrics(fnt2).getStringBounds("libre", g);
                         x = (int) rectangle.getWidth() / 2;
                         g.drawString("libre", EKIA.ANCHO / 2 - x, 100);
-                        g.drawImage(nivImg[0], 176, 145, 284, 200, null);
+                        g.drawImage(nivImg[0], 176, 125, 284, 200, null);
 
                     } else if (diseñoInt == DISEÑO.intermedio.ordinal()) {
 
                         rectangle = g.getFontMetrics(fnt2).getStringBounds("intermedio", g);
                         x = (int) rectangle.getWidth() / 2;
                         g.drawString("intermedio", EKIA.ANCHO / 2 - x, 100);
-                        g.drawImage(nivImg[1], 176, 145, 284, 200, null);
+                        g.drawImage(nivImg[1], 176, 125, 284, 200, null);
 
                     } else if (diseñoInt == DISEÑO.laberinto.ordinal()) {
 
                         rectangle = g.getFontMetrics(fnt2).getStringBounds("sala de batalla", g);
                         x = (int) rectangle.getWidth() / 2;
                         g.drawString("sala de batalla", EKIA.ANCHO / 2 - x, 100);
-                        g.drawImage(nivImg[2], 176, 145, 284, 200, null);
+                        g.drawImage(nivImg[2], 176, 125, 284, 200, null);
 
                     }
-                    g.drawRect(176, 145, 284, 200);
+                    g.drawRect(176, 125, 284, 200);
+
+                    // Esta seccion es unicamente para el online y nos informa que jugador esta listo para iniciar la partida
+                    if (EKIA.conectadoOnline) {
+                        // Si somos el host imprimimos los listos de una manera
+                        if (EKIA.host) {
+
+                            // Si el jugador 1 esta listo
+                            if (listo) {
+                                g.setColor(Color.white);
+                                g.drawString("Listo", 50, 95);
+                                g.setColor(Color.red);
+                                g.fillRect(25, 75, 16, 16);
+                            }
+
+                            if (conexion.isListo()) {
+                                g.setColor(Color.white);
+                                g.drawString("Listo", EKIA.ANCHO - 155, 95);
+                                g.setColor(Color.blue);
+                                g.fillRect(EKIA.ANCHO - 60, 78, 16, 16);
+                            }
+
+                        } else { // Si somos el cliente entonces imprimimos los ready al reves
+
+                            // Si el jugador 1 esta listo
+                            if (conexion.isListo()) {
+                                g.setColor(Color.white);
+                                g.drawString("Listo", 50, 95);
+                                g.setColor(Color.red);
+                                g.fillRect(25, 75, 16, 16);
+                            }
+
+                            if (listo) {
+                                g.setColor(Color.white);
+                                g.drawString("Listo", EKIA.ANCHO - 155, 95);
+                                g.setColor(Color.blue);
+                                g.fillRect(EKIA.ANCHO - 60, 78, 16, 16);
+                            }
+                        }
+                    }
+
                     break;
 
                 case Online:
@@ -488,6 +562,7 @@ public class Menu extends MouseAdapter {
                     if (!EKIA.conectadoOnline) {
 
                         if (mouseOver(mx, my, EKIA.ANCHO / 2 - 100, 250, 200, 64)) { // Revancha Button
+                            playlistGame.detenerCancion();
                             Sound clip = new Sound("res/Sonidos/menuShot.mp3");
                             clip.play();
                             iniciarPartida();
@@ -511,15 +586,32 @@ public class Menu extends MouseAdapter {
                     }
                     break;
 
-                case ErrorOnline:
-                    if (mouseOver(mx, my, EKIA.ANCHO / 2 - 100, 350, 200, 64)) { // REGRESAR
+                case EresUnCobarde:
+
+                    if (mouseOver(mx, my, EKIA.ANCHO / 2 - 100, 350, 200, 64)) { // Menu button
                         EKIA.estadoActual = EstadoJuego.Menu;
-                        terminaConexion();
                         playlistGame.detenerCancion();
                         Sound clip = new Sound("res/Sonidos/menuShot.mp3");
                         clip.play();
                         playlistMenu.elegirCancionAzar();
                         playlistMenu.reproducirCancion();
+                        EKIA.errorOnline = false;
+                        EKIA.host = false;
+                    }
+                    break;
+
+                case ErrorOnline:
+                    if (mouseOver(mx, my, EKIA.ANCHO / 2 - 100, 350, 200, 64)) { // REGRESAR
+                        EKIA.estadoActual = EstadoJuego.Menu;
+                        terminaConexion();
+                        if (EKIA.estadoAnterior != EstadoJuego.Online) {
+                            playlistGame.detenerCancion();
+                            EKIA.estadoAnterior = EstadoJuego.Portada;
+                            playlistMenu.elegirCancionAzar();
+                            playlistMenu.reproducirCancion();
+                        }
+                        Sound clip = new Sound("res/Sonidos/menuShot.mp3");
+                        clip.play();
                         EKIA.errorOnline = false;
                         EKIA.host = false;
                     }
@@ -574,7 +666,7 @@ public class Menu extends MouseAdapter {
                         return;
 
                     }
-                    if (mouseOver(mx, my, 15, 170, 50, 150)) { // MAPA IZQUIERDA
+                    if (mouseOver(mx, my, 15, 150, 50, 150)) { // MAPA IZQUIERDA
 
                         Sound clip = new Sound("res/Sonidos/menuShot.mp3");
                         clip.play();
@@ -587,7 +679,7 @@ public class Menu extends MouseAdapter {
                         return;
 
                     }
-                    if (mouseOver(mx, my, EKIA.ANCHO - 70, 170, 50, 150)) { // MAPA DERECHA
+                    if (mouseOver(mx, my, EKIA.ANCHO - 90, 150, 50, 150)) { // MAPA DERECHA
 
                         Sound clip = new Sound("res/Sonidos/menuShot.mp3");
                         clip.play();
@@ -601,6 +693,54 @@ public class Menu extends MouseAdapter {
                     }
                     break;
 
+                case SeleccionPersonajeOnline:
+
+                    // Estando en seleccion de personaje que en este caso es seleccion de nivel
+                    if (mouseOver(mx, my, EKIA.ANCHO / 2 - 250, EKIA.ALTO - 120, 200, 64)) { // Atras
+                        terminaConexion();
+                        EKIA.estadoActual = EstadoJuego.Online;
+                        Sound clip = new Sound("res/Sonidos/menuShot.mp3");
+                        clip.play();
+                        return;
+                    }
+                    if (mouseOver(mx, my, EKIA.ANCHO / 2 + 50, EKIA.ALTO - 120, 200, 64)) { // Aceptar
+
+                        // Aqui debemos indicar que ya esta listo el usuario, que tenemos que esperar al otro
+                        listo = !listo;
+                        Sound clip = new Sound("res/Sonidos/menuShot.mp3");
+                        clip.play();
+                        return;
+
+                    }
+                    if (mouseOver(mx, my, 15, 150, 50, 150)) { // MAPA IZQUIERDA
+
+                        Sound clip = new Sound("res/Sonidos/menuShot.mp3");
+                        clip.play();
+                        diseñoInt--;
+                        if (diseñoInt < 0) {
+                            diseñoInt = 2; // Por el momento solo hay tres modos
+                        } else if (diseñoInt > 2) {
+                            diseñoInt = 0; // Para hacer un loop
+                        }
+                        conexion.setDiseñoInt(diseñoInt);
+                        return;
+
+                    }
+                    if (mouseOver(mx, my, EKIA.ANCHO - 90, 150, 50, 150)) { // MAPA DERECHA
+
+                        Sound clip = new Sound("res/Sonidos/menuShot.mp3");
+                        clip.play();
+                        diseñoInt++;
+                        if (diseñoInt < 0) {
+                            diseñoInt = 2; // Por el momento solo hay tres modos
+                        } else if (diseñoInt > 2) {
+                            diseñoInt = 0; // Para hacer un loop
+                        }
+                        conexion.setDiseñoInt(diseñoInt);
+
+                    }
+
+                    break;
                 case Ayuda:
 
                     if (mouseOver(mx, my, EKIA.ANCHO / 2 - 100, 350, 200, 64)) { // REGRESAR
@@ -756,4 +896,21 @@ public class Menu extends MouseAdapter {
             handler.addObject(new Bala(bx, by, ID.BalaMenu, handler, nuevo, 16, 16, r.nextInt(5) - 5, r.nextInt(5) - 5, ID.Jugador1));
         }
     }
+
+    public int getDiseñoInt() {
+        return diseñoInt;
+    }
+
+    public void setDiseñoInt(int diseñoInt) {
+        this.diseñoInt = diseñoInt;
+    }
+
+    public boolean isListo() {
+        return listo;
+    }
+
+    public void setListo(boolean listo) {
+        this.listo = listo;
+    }
+
 }
