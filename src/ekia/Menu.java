@@ -32,8 +32,25 @@ public class Menu extends MouseAdapter {
     // VARIABLES PARA LÓGICA DE RENDERIZADO EN LAS DISTINTAS PANTALLAS
     public static boolean primeraVezMenu = true; // Para solo agregar una vez las particulas del menu
     private Random r = new Random(System.currentTimeMillis());
-    String[] cancionesJuego = {"res/Canciones/Divide.mp3", "res/Canciones/Genesis Justice.mp3", "res/Canciones/LED Spirals.mp3", "res/Canciones/Fake.mp3", "res/Canciones/Semi.mp3", "res/Canciones/Infinite Ammo.mp3"}; // Son las canciones para durante el juego
-    String[] cancionesMenu = {"res/Canciones/Hydrogen Moon.mp3", "res/Canciones/John Wick Mode.mp3", "res/Canciones/FIGHT.mp3", "res/Canciones/Dust.mp3"};
+    String[] cancionesJuego = {
+        "res/Canciones/Divide.mp3",
+        "res/Canciones/Genesis Justice.mp3",
+        "res/Canciones/LED Spirals.mp3",
+        "res/Canciones/I dunno.mp3",
+        "res/Canciones/Semi.mp3",
+        "res/Canciones/Cave Crawl.mp3",
+        "res/Canciones/Demon.mp3",
+        "res/Canciones/Infinite Ammo.mp3"
+    }; // Son las canciones para durante el juego
+    String[] cancionesMenu = {
+        "res/Canciones/Hydrogen Moon.mp3",
+        "res/Canciones/John Wick Mode.mp3",
+        "res/Canciones/FIGHT.mp3",
+        "res/Canciones/Dust.mp3",
+        "res/Canciones/Bandicoot.mp3",
+        "res/Canciones/Savemesomeofdat.mp3",
+        "res/Canciones/Gasoline.mp3"
+    };
     private Canciones playlistGame = new Canciones(cancionesJuego);
     private Canciones playlistMenu = new Canciones(cancionesMenu);
     private BufferedImage image;

@@ -17,22 +17,11 @@ public class Canciones {
         // Mete todas las canciones en la playlist
         playlist.addAll(Arrays.asList(nombres));
         portadaSong = "res/Canciones/Crystals.mp3";
-        playlistEG = new ArrayList();
-        playlistEG.add("res/Canciones/War.mp3");
-        playlistEG.add("res/Canciones/Salamander.mp3");
-        playlistEG.add("res/Canciones/FinalTest.mp3");
-        playlistEG.add("res/Canciones/Dragons.mp3");
     }
 
     public void elegirCancionAzar() {
         int azar = r.nextInt(playlist.size()); // elige una cancion de la playlist
         String name = playlist.get(azar);
-        cancionActual = new Sound(name);
-    }
-
-    public void elegirCancionAzarEG() {
-        int azar = r.nextInt(playlistEG.size()); // elige una cancion de la playlist
-        String name = playlistEG.get(azar);
         cancionActual = new Sound(name);
     }
 
